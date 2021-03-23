@@ -10,6 +10,8 @@ const SkeletonLoader: React.FC<LoaderProps> = ({ size }: LoaderProps) => (
             <TableCell />
             <TableCell />
             <TableCell />
+            <TableCell />
+
         </Box>
     )
 

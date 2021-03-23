@@ -10,18 +10,19 @@ import { debounce } from "../utils/debounce";
 import { getHasNextPage } from "../utils/getHasNextPage";
 import { Movie } from "../api/types/Movie";
 import { Pagination } from "../api/types/Pagination";
-// import { getHasNextPage } from "../utils/getHasNextPage";
-
+import { fetchNowPlayingApi, FetchNowPlayingApiResponse } from "../api/fetchNowPlaying";
+import { normalizeGenres } from "../normalizers/genres.normalize";
+import { fetchGenresList, FetchGenresApiResponse } from "../api/fetchGenres";
+import { Genre } from "../api/types/Genre";
 
 interface MoviesManagementState {
     loading: boolean;
-    loadingCheckout: boolean;
     moviesList: Movie[];
     searchTerm: string;
     isSearching: boolean;
     pagination: Pagination;
-    selectedMovies: Movie[];
-    sortMoviesBy: SortType;
+    sortMoviesBy: string;
+    genresEntities: Record<number, Genre> | null;
 }
 
 export type SortType = "highest_vote_average" | "lowest_vote_average" | "" | string;
@@ -33,10 +34,9 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         this.state = {
             moviesList: [],
             loading: false,
-            loadingCheckout: false,
             searchTerm: "",
             isSearching: false,
-            selectedMovies: [],
+            genresEntities: null,
             sortMoviesBy: "",
             pagination: {
                 page: 1,
@@ -49,8 +49,69 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         this.handleSearch = debounce(this.handleSearch, 500);
     }
 
+    componentDidMount() {
+        this.fetchGenres();
+    }
+
+    fetchGenres = () => {
+
+        fetchGenresList().then((response: FetchGenresApiResponse) => {
+            if (response.success) {
+                const normalizedGenresList = normalizeGenres(response.data.genres);
+
+                this.setState({ genresEntities: normalizedGenresList }, () => {
+                    this.fetchNowPlaying();
+                });
+            } else {
+                toast.error(response.errorMessage);
+                this.setState({
+                    genresEntities: null,
+                    loading: false,
+                });
+            }
+        });
+    }
+
+    fetchNowPlaying = () => {
+        const { pagination } = this.state;
+        const { page } = pagination;
+
+        this.setState({ loading: true });
+
+        const params = {
+            page: page,
+        }
+
+        fetchNowPlayingApi(params).then((response: FetchNowPlayingApiResponse) => {
+            if (response.success) {
+                // const updatedMoviesList = getFetchedUpdatedItems(selectedMovies, response.data.results);
+
+                this.setState({
+                    moviesList: response.data.results,
+                    loading: false,
+                    sortMoviesBy: "",
+                    pagination: {
+                        page: response.data.page,
+                        total_results: response.data.total_results,
+                        total_pages: response.data.total_pages,
+                        hasNextPage: getHasNextPage(
+                            response.data.page,
+                            response.data.total_results
+                        ),
+                    },
+                });
+            } else {
+                toast.error(response.errorMessage);
+                this.setState({
+                    moviesList: [],
+                    loading: false,
+                });
+            }
+        });
+    }
+
     fetchMovies = (query: string, isNewSearch?: boolean) => {
-        const { pagination, selectedMovies } = this.state;
+        const { pagination } = this.state;
         const { page } = pagination;
 
         this.setState({ loading: true });
@@ -116,8 +177,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
             searchTerm,
             isSearching,
             pagination,
-            selectedMovies,
-            loadingCheckout,
+            genresEntities,
             sortMoviesBy
         } = this.state;
 
@@ -141,11 +201,11 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                         flexDirection="row"
                         flexWrap="wrap"
                         justifyContent="space-evenly"
-                        width="80%"
                     >
                         {!loading
                             ? <MoviesList
                                 moviesList={moviesList}
+                                genresEntities={genresEntities}
                             />
                             : <SkeletonLoader />
                         }

@@ -5,12 +5,15 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import { Genre } from "./../api/types/Genre";
+import { getGenresNames } from "../utils/getGenresNames";
 
 interface MoviesListProps {
     moviesList: Movie[];
+    genresEntities: Record<number, Genre> | null;
 }
 
-const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListProps) => {
+const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, genresEntities }: MoviesListProps) => {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState("")
 
@@ -47,6 +50,9 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListPr
                                         <Box component={Typography} textAlign="justify" p="5px" color="textPrimary">
                                             Overview: {movie.overview}
                                         </Box>
+                                        <Box component={Typography} textAlign="justify" p="5px" color="textPrimary">
+                                            Overview: {movie.overview}
+                                        </Box>
                                     </CardContent>
                                     <CardActions>
                                         <Button size="small" onClick={() => handleDetails("")}>Close details</Button>
@@ -64,6 +70,15 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListPr
                                         <Typography color="textSecondary">
                                             Score: {movie.vote_average}
                                         </Typography>
+                                        <Typography color="textSecondary">
+                                            Release date: {movie.release_date}
+                                        </Typography>
+                                        <Box component={Typography} textAlign="justify" p="5px" color="textPrimary">
+                                            Overview: {movie.overview}
+                                        </Box>
+                                        <Box component={Typography} textAlign="justify" p="5px" color="textPrimary">
+                                            Genres: {getGenresNames(genresEntities, movie.genre_ids)}
+                                        </Box>
                                     </CardContent>
                                 </Card>
                             }

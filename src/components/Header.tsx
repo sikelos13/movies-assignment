@@ -17,7 +17,7 @@ interface ViewHeaderProps {
 
 const Header: React.FC<ViewHeaderProps> = (({ handleSearch, handlePaginate, sortMoviesBy, isSearching, pagination }: ViewHeaderProps) => (
   <Box display="flex" flexDirection="column" alignItems="center">
-    <Box component="h2" fontWeight="500" fontSize="2rem" color="#3569b8">Movies Finder</Box>
+    <Box component="h2" fontWeight="500" fontSize="2rem" color="#3569b8">Welcome to MoviesRama</Box>
     <Box display="flex" width="100%" flexDirection="row" justifyContent="space-between" p={1} className="Header_Actions">
       <Input placeholder="Search movies by name..." className="Search_Input" onChange={handleSearch} />
       {pagination.total_pages > 0 &&

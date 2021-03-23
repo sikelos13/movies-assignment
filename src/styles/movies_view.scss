@@ -1,0 +1,28 @@
+.Search_Input {
+    width: 100%;
+    max-width: 500px;
+}
+
+.Image_Poster {
+    border-radius: 5px;
+}
+
+.SortHeader_Action {
+    align-self: flex-end;
+}
+
+@media only screen and (max-width: 1040px) {
+    .Header_Actions {
+        flex-direction: column !important;
+        align-items: center;
+
+        .SortHeader_Action {
+            align-self: center;
+        }
+    }
+
+    .MainContainer_Body {
+        flex-direction: column-reverse !important;
+        align-self: center;
+    }
+  }
