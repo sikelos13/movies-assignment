@@ -2,7 +2,7 @@ import axios from 'axios';
 import { handleErrorMessage } from './utils/handleErrorMessage';
 import { Genre } from './types/Genre';
 
-export interface FetchMoviesApiResponse {
+export interface FetchGenresApiResponse {
     success: boolean;
     errorMessage: string;
     status: number
@@ -20,7 +20,7 @@ export interface FetchMoviesApiResponse {
  * @returns Promise<FetchMoviesApiResponse>
  */
 
-export const fetchGenresList = (): Promise<FetchMoviesApiResponse> => (
+export const fetchGenresList = (): Promise<FetchGenresApiResponse> => (
     axios.get([
         `${process.env.REACT_APP_API_ENDPOINT}/genre/movie/list`,
         `?api_key=${process.env.REACT_APP_API_KEY}`

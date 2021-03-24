@@ -193,7 +193,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                     searchTerm={searchTerm}
 
                 />
-                <Box display="flex" flexDirection="row" className="MainContainer_Body">
+                <Box display="flex" justifyContent="center" flexDirection="row" className="MainContainer_Body">
                     <Box
                         mt={2}
                         pb={2}
