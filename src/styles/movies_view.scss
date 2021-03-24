@@ -11,6 +11,10 @@
     align-self: flex-end;
 }
 
+.MovieContainer_Element:hover {
+    cursor: pointer;
+}
+
 @media only screen and (max-width: 1040px) {
     .Header_Actions {
         flex-direction: column !important;

@@ -7,7 +7,6 @@ import { Pagination } from "../api/types/Pagination";
 
 interface ViewHeaderProps {
   handleSearch: (event: any) => void;
-  handlePaginate: (pageNumber: number) => void;
 //   handleSortChange: (event: any) => void;
   sortMoviesBy: SortType;
   searchTerm: string;
@@ -15,7 +14,7 @@ interface ViewHeaderProps {
   pagination: Pagination;
 }
 
-const Header: React.FC<ViewHeaderProps> = (({ handleSearch, handlePaginate, sortMoviesBy, isSearching, pagination }: ViewHeaderProps) => (
+const Header: React.FC<ViewHeaderProps> = (({ handleSearch, sortMoviesBy, isSearching, pagination }: ViewHeaderProps) => (
   <Box display="flex" flexDirection="column" alignItems="center">
     <Box component="h2" fontWeight="500" fontSize="2rem" color="#3569b8">Welcome to MoviesRama</Box>
     <Box display="flex" width="100%" flexDirection="row" justifyContent="space-between" p={1} className="Header_Actions">

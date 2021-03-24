@@ -14,9 +14,10 @@ import { fetchNowPlayingApi, FetchNowPlayingApiResponse } from "../api/fetchNowP
 import { normalizeGenres } from "../normalizers/genres.normalize";
 import { fetchGenresList, FetchGenresApiResponse } from "../api/fetchGenres";
 import { Genre } from "../api/types/Genre";
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 interface MoviesManagementState {
-    loading: boolean;
+    loading: LoadingType;
     moviesList: Movie[];
     searchTerm: string;
     isSearching: boolean;
@@ -26,14 +27,19 @@ interface MoviesManagementState {
 }
 
 export type SortType = "highest_vote_average" | "lowest_vote_average" | "" | string;
+type LoadingType = "load_more_items" | "initial_load" | null;
 
 class MoviesView extends Component<{}, MoviesManagementState> {
+    private tableScrollbarRef: any;
+
     constructor(props: any) {
         super(props);
 
+        this.tableScrollbarRef = React.createRef();
+
         this.state = {
             moviesList: [],
-            loading: false,
+            loading: null,
             searchTerm: "",
             isSearching: false,
             genresEntities: null,
@@ -66,29 +72,29 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                 toast.error(response.errorMessage);
                 this.setState({
                     genresEntities: null,
-                    loading: false,
+                    loading: null,
                 });
             }
         });
     }
 
-    fetchNowPlaying = () => {
-        const { pagination } = this.state;
+    fetchNowPlaying = (nextPage?: number) => {
+        const { pagination, moviesList } = this.state;
         const { page } = pagination;
 
-        this.setState({ loading: true });
+        this.setState({ loading: nextPage ? "load_more_items" : "initial_load" });
 
         const params = {
-            page: page,
+            page: nextPage ? nextPage : page,
         }
 
         fetchNowPlayingApi(params).then((response: FetchNowPlayingApiResponse) => {
             if (response.success) {
-                // const updatedMoviesList = getFetchedUpdatedItems(selectedMovies, response.data.results);
+                const updatedMoviesList = nextPage ? [...moviesList, ...response.data.results] : response.data.results;
 
                 this.setState({
-                    moviesList: response.data.results,
-                    loading: false,
+                    moviesList: updatedMoviesList,
+                    loading: null,
                     sortMoviesBy: "",
                     pagination: {
                         page: response.data.page,
@@ -104,7 +110,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                 toast.error(response.errorMessage);
                 this.setState({
                     moviesList: [],
-                    loading: false,
+                    loading: null,
                 });
             }
         });
@@ -114,7 +120,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         const { pagination } = this.state;
         const { page } = pagination;
 
-        this.setState({ loading: true });
+        this.setState({ loading: isNewSearch ? "initial_load" : "load_more_items"});
 
         const params = {
             query,
@@ -127,7 +133,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
 
                 this.setState({
                     moviesList: response.data.results,
-                    loading: false,
+                    loading: null,
                     sortMoviesBy: "",
                     pagination: {
                         page: response.data.page,
@@ -143,7 +149,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                 toast.error(response.errorMessage);
                 this.setState({
                     moviesList: [],
-                    loading: false,
+                    loading: null,
                 });
             }
         });
@@ -156,19 +162,20 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         }
     };
 
-    handlePaginate = (pageNumber: number) => {
-        const { pagination, searchTerm } = this.state;
+    handleScroll = (e: any) => {
+        const { pagination, loading } = this.state;
+        const { page, hasNextPage} = pagination
 
-        this.setState(
-            {
-                pagination: {
-                    ...pagination,
-                    page: pageNumber,
-                },
-            },
-            () => this.fetchMovies(searchTerm)
-        );
-    };
+        const bottom = e.target.scrollHeight - e.target.scrollTop - 1 <= e.target.clientHeight; // -1 is for edge cases with decimal numbers of scrollTop
+
+        if (bottom && hasNextPage && loading === null) {
+            this.fetchNowPlaying(page+1);
+        }
+    }
+
+    scrollToTopScrollbar = () => {
+        this.tableScrollbarRef && this.tableScrollbarRef.scrollToTop && this.tableScrollbarRef.scrollToTop();
+    }
 
     render() {
         const {
@@ -182,14 +189,13 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         } = this.state;
 
         return (
-            <Box p={2} mt={2}>
+            <Box p={2} mt={2} style={{ overflowY: "scroll", maxHeight: "1200px"}} onScroll={this.handleScroll}>
                 <Header
                     sortMoviesBy={sortMoviesBy}
                     // handleSortChange={this.handleSortChange}
                     handleSearch={this.handleSearch}
                     pagination={pagination}
                     isSearching={isSearching}
-                    handlePaginate={this.handlePaginate}
                     searchTerm={searchTerm}
 
                 />
@@ -202,12 +208,14 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                         flexWrap="wrap"
                         justifyContent="space-evenly"
                     >
-                        {!loading
-                            ? <MoviesList
-                                moviesList={moviesList}
-                                genresEntities={genresEntities}
-                            />
-                            : <SkeletonLoader />
+                        {loading === "initial_load"
+                            ? <SkeletonLoader />
+                            : loading === "load_more_items"
+                                ? <CircularProgress color="primary" />
+                                : <MoviesList
+                                    moviesList={moviesList}
+                                    genresEntities={genresEntities}
+                                />
                         }
                     </Box>
                 </Box>
