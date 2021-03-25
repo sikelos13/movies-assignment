@@ -14,9 +14,9 @@ import { fetchNowPlayingApi, FetchNowPlayingApiResponse } from "../api/fetchNowP
 import { normalizeGenres } from "../normalizers/genres.normalize";
 import { fetchGenresList, FetchGenresApiResponse } from "../api/fetchGenres";
 import { Genre } from "../api/types/Genre";
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { normalizeMovies } from '../normalizers/movies.normalize';
 import { initState } from '../utils/initialState';
+import { getUpdatedWithNewItemsList } from '../utils/getUpdatedWithNewItemsList';
 
 export interface MoviesManagementState {
     loading: LoadingType;
@@ -85,7 +85,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         fetchNowPlayingApi(params).then((response: FetchNowPlayingApiResponse) => {
             if (response.success) {
                 const normalizedMoviesList = normalizeMovies(response.data.results, genresEntities);
-                const updatedMoviesList = nextPage ? [...moviesList, ...normalizedMoviesList] : normalizedMoviesList;
+                const updatedMoviesList = nextPage ? getUpdatedWithNewItemsList(moviesList, normalizedMoviesList) : normalizedMoviesList;
 
                 this.setState({
                     moviesList: updatedMoviesList,
@@ -200,14 +200,12 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                         flexDirection="row"
                         flexWrap="wrap"
                         justifyContent="space-evenly"
-                        style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 165px)'}}
+                        style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 310px)'}}
                         onScroll={this.handleScroll}
                     >
                         {loading === "initial_load"
                             ? <SkeletonLoader />
-                            : loading === "load_more_items"
-                                ? <CircularProgress color="primary" />
-                                : <MoviesList moviesList={moviesList} />
+                            : <MoviesList moviesList={moviesList} loadingMoreItems={loading} />
                         }
                     </Box>
                 </Box>

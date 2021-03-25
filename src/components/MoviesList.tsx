@@ -7,12 +7,16 @@ import Paper from '@material-ui/core/Paper';
 import Slide from '@material-ui/core/Slide';
 import MovieDescription from "./MovieCard/MovieDescription";
 
-interface MoviesListProps { moviesList: MovieExtended[]; }
+interface MoviesListProps { 
+    moviesList: MovieExtended[];  
+    loadingMoreItems: string | null;
+}
+
 interface MovieTrailerApiResponse { results: Trailer[]; }
 interface MovieReviewApiResponse { results: Review[]; }
 interface SimilarMoviesApiResponse { results: Movie[]; }
 
-const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListProps) => {
+const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, loadingMoreItems }: MoviesListProps) => {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState("");
     const [selectedMovieTrailer, setSelectedMovieTrailer] = useState("");
@@ -72,7 +76,7 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListPr
 
     return (
         <>
-            {moviesList.length > 0
+            {moviesList.length > 0 
                 ? moviesList.map((movie: MovieExtended) => {
                     const showSelectedMovieDetails = showDetails && selectedMovie === movie.id;
 
@@ -81,10 +85,10 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListPr
                             <Card style={{ height: "400px", width: "330px", overflowY: "auto" }}>
                                 {!showSelectedMovieDetails ? (
                                     <Slide direction="up" in={!showSelectedMovieDetails} mountOnEnter unmountOnExit timeout={500}>
-                                        <Paper  elevation={0}>
+                                        <Paper elevation={0}>
                                             <MovieDescription movie={movie} />
                                         </Paper>
-                                    </Slide>
+                                     </Slide>
                                 ) : null}
 
                                 {showSelectedMovieDetails ? (

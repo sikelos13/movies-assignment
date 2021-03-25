@@ -14,20 +14,20 @@ const MovieDescription: React.FC<MovieDescriptionProps> = memo(({ movie }: Movie
         <Box component={"p"} display="flex" justifyContent="center" p="5px">
             {movie.poster_path
                 ? <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt="preview-poster" width="200" height="250" className="Image_Poster" />
-                : <Box width="200px" height="250px" textAlign="center" fontSize="20px" fontWeight="bold">Without poster</Box>
+                : <Box component={"span"} width="200px" height="250px" textAlign="center" fontSize="20px" fontWeight="bold">Without poster</Box>
             }
         </Box>
-        <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-            Score: {movie.vote_average}
+        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+            <Box component={'span'} fontWeight="bold">Score:</Box> {movie.vote_average}
         </Box>
-        <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-            Release date: {movie.release_date}
+        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+            <Box component={'span'} fontWeight="bold">Release date:</Box> {movie.release_date}
         </Box>
-        <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-            Overview: {movie.overview}
+        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+            <Box component={'span'} fontWeight="bold">Overview:</Box> {movie.overview}
         </Box>
-        <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-            Genres: {movie.genres}
+        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+            <Box component={'span'} fontWeight="bold">Genres:</Box> {movie.genres}
         </Box>
     </CardContent>
 ));
