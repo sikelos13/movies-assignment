@@ -15,6 +15,10 @@ export interface Movie {
     vote_average: number;
 }
 
+export interface MovieExtended extends Movie {
+    genres: string;
+}
+
 export interface Trailer {
     id: string;
     iso_639_1: string;

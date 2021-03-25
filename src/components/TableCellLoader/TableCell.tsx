@@ -3,7 +3,7 @@ import { SkeletonCard } from './components/SkeletonCard';
 
 export const TableCell = () => {
     return (
-        <Box width="25%" mr={5}>
+        <Box width="33%" mr={5} p={3}>
             <SkeletonCard />
             <SkeletonCard />
             <SkeletonCard />

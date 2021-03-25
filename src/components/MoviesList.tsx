@@ -1,35 +1,23 @@
 import React, { memo, useState } from 'react';
-import { Movie, Trailer, Review } from './../api/types/Movie';
+import { Movie, Trailer, Review, MovieExtended } from './../api/types/Movie';
 import { Box } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { Genre } from "./../api/types/Genre";
-import { getGenresNames } from "../utils/getGenresNames";
-import MovieDetails from "./MovieDetails";
+import MovieDetails from "./MovieCard/MovieDetails";
 import Paper from '@material-ui/core/Paper';
-
 import Slide from '@material-ui/core/Slide';
+import MovieDescription from "./MovieCard/MovieDescription";
 
-interface MoviesListProps {
-    moviesList: Movie[];
-    genresEntities: Record<number, Genre> | null;
-}
+interface MoviesListProps { moviesList: MovieExtended[]; }
+interface MovieTrailerApiResponse { results: Trailer[]; }
+interface MovieReviewApiResponse { results: Review[]; }
+interface SimilarMoviesApiResponse { results: Movie[]; }
 
-interface MovieTrailerApiResponse {
-    results: Trailer[];
-}
-
-interface MovieReviewApiResponse {
-    results: Review[];
-}
-
-const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, genresEntities }: MoviesListProps) => {
+const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListProps) => {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState("");
     const [selectedMovieTrailer, setSelectedMovieTrailer] = useState("");
     const [selectedMovieReviews, setSelectedMovieReviews] = useState<any>([]);
-    const [selectedMovieSimilar, setSelectedMovieSimilar] = useState("");
+    const [selectedMovieSimilar, setSelectedMovieSimilar] = useState("No similar movies");
 
     const getSelectedMovieDetails = (id: string) => {
         Promise.all([
@@ -57,10 +45,16 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, genresEntities
                     setSelectedMovieReviews(reviews);
                 }
             })
-            res3.json().then((response3: any) => {
-                console.log(response3)
+            res3.json().then((response3: SimilarMoviesApiResponse) => {
+                if (response3.results.length > 0) {
+                    const totalSimilarMovies = response3.results.map((similarMovie: Movie) => {
+                        return similarMovie.title;
+                    });
+                    const joinSimilarMoviesValue = totalSimilarMovies.join(", ");
+                    setSelectedMovieSimilar(joinSimilarMoviesValue);
+                }
             })
-        })
+        }).catch(err => console.log('Catch', err));
     }
 
 
@@ -79,7 +73,7 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, genresEntities
     return (
         <>
             {moviesList.length > 0
-                ? moviesList.map((movie: Movie) => {
+                ? moviesList.map((movie: MovieExtended) => {
                     const showSelectedMovieDetails = showDetails && selectedMovie === movie.id;
 
                     return (
@@ -87,46 +81,24 @@ const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, genresEntities
                             <Card style={{ height: "400px", width: "330px", overflowY: "auto" }}>
                                 {!showSelectedMovieDetails ? (
                                     <Slide direction="up" in={!showSelectedMovieDetails} mountOnEnter unmountOnExit timeout={500}>
-                                        <Paper elevation={0}>
-                                        <CardContent>
-                                            <Typography color="textPrimary">{movie.title}</Typography>
-                                            <Box display="flex" justifyContent="center" p="5px">
-                                                {movie.poster_path
-                                                    ? <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} alt="preview-poster" width="200" height="250" className="Image_Poster" />
-                                                    : <Box width="200px" height="250px" textAlign="center" fontSize="20px" fontWeight="bold">Without poster</Box>
-                                                }
-                                            </Box>
-                                            <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-                                                Score: {movie.vote_average}
-                                            </Box>
-                                            <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-                                                Release date: {movie.release_date}
-                                            </Box>
-                                            <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-                                                Overview: {movie.overview}
-                                            </Box>
-                                            <Box component={Typography} textAlign="justify" p="5px" color="textSecondary">
-                                                Genres: {getGenresNames(genresEntities, movie.genre_ids)}
-                                            </Box>
-                                        </CardContent>
+                                        <Paper  elevation={0}>
+                                            <MovieDescription movie={movie} />
                                         </Paper>
                                     </Slide>
                                 ) : null}
 
                                 {showSelectedMovieDetails ? (
                                     <Slide direction="up" in={showSelectedMovieDetails} mountOnEnter unmountOnExit timeout={500}>
-                                    <Paper elevation={0}>
-                                            <MovieDetails selectedMovieTrailer={selectedMovieTrailer} selectedMovieReviews={selectedMovieReviews} />
+                                        <Paper elevation={0}>
+                                            <MovieDetails 
+                                                selectedMovieSimilar={selectedMovieSimilar} 
+                                                selectedMovieTrailer={selectedMovieTrailer} 
+                                                selectedMovieReviews={selectedMovieReviews} 
+                                            />
                                         </Paper>
                                     </Slide>
                                 ) : null}
-
                             </Card>
-                            {/* <Collapse in={showSelectedMovieDetails}>
-                                    <Paper elevation={4}>
-                                        <MovieDetails selectedMovieTrailer={selectedMovieTrailer} selectedMovieReviews={selectedMovieReviews} />
-                                    </Paper>
-                                </Collapse> */}
                         </Box>
                     )
                 })

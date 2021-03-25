@@ -4,7 +4,7 @@ import { Container } from '@material-ui/core';
 
 function App() {
   return (
-    <Container className="Main_Container" style={{ maxWidth: "1400px" }}>
+    <Container>
       <MoviesView />
     </Container>
   );
