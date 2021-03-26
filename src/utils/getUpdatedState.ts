@@ -1,10 +1,10 @@
 import { MoviesManagementState } from "../containers/MoviesView"
 import { MovieExtended } from "../api/types/Movie";
-import { getHasNextPage } from "../utils/getHasNextPage";
+import { getHasNextPage } from "./getHasNextPage";
 import { FetchNowPlayingApiResponse } from "../api/fetchNowPlaying";
 import { FetchMoviesApiResponse } from "../api/fetchMovies";
 
-export const newState = (prevState: MoviesManagementState, response: FetchMoviesApiResponse | FetchNowPlayingApiResponse, updatedMoviesList: MovieExtended[]): MoviesManagementState => {
+export const getUpdatedState = (prevState: MoviesManagementState, response: FetchMoviesApiResponse | FetchNowPlayingApiResponse, updatedMoviesList: MovieExtended[]): MoviesManagementState => {
 
     const state: MoviesManagementState = {
         ...prevState,

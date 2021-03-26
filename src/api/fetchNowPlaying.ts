@@ -18,13 +18,12 @@ export interface FetchMoviesApiParams {
 }
 
 /**
- *  Get movies list
+ *  Get movies list of now playing
  *
  * Endpoints:
- * - GET /search/movie/?query={query}
- *  @param {string} query
+ * - GET /movie/now_playing/
  *
- * @returns Promise<FetchMoviesApiResponse>
+ * @returns Promise<FetchNowPlayingApiResponse>
  */
 
 export const fetchNowPlayingApi = (params: FetchMoviesApiParams): Promise<FetchNowPlayingApiResponse> => (

@@ -16,7 +16,8 @@ import { Genre } from "../api/types/Genre";
 import { normalizeMovies } from '../normalizers/movies.normalize';
 import { initState } from '../utils/initialState';
 import { getUpdatedWithNewItemsList } from '../utils/getUpdatedWithNewItemsList';
-import { newState } from '../utils/setNewState';
+import { getUpdatedState } from '../utils/getUpdatedState';
+import { getSortedMoviesList } from '../utils/getSortedMoviesList';
 
 export interface MoviesManagementState {
     loading: LoadingType;
@@ -25,6 +26,7 @@ export interface MoviesManagementState {
     isSearching: boolean;
     pagination: Pagination;
     sortMoviesBy: string;
+    defaultMoviesList: MovieExtended[];
     genresEntities: Record<number, Genre> | null;
 }
 
@@ -32,7 +34,6 @@ export type SortType = "highest_vote_average" | "lowest_vote_average" | "" | str
 type LoadingType = "load_more_items" | "initial_load" | null;
 
 class MoviesView extends Component<{}, MoviesManagementState> {
-
     constructor(props: any) {
         super(props);
 
@@ -44,8 +45,12 @@ class MoviesView extends Component<{}, MoviesManagementState> {
         this.fetchGenres();
     }
 
+    componentDidUpdate() {
+        this.scrollbarIsVisible();
+    }
+
     fetchMovies = (nextPage: number, searchParam: string) => {
-        if(searchParam === "") {
+        if (searchParam === "") {
             this.fetchNowPlaying(nextPage);
         } else {
             this.fetchSearchedMovies(searchParam, false, nextPage);
@@ -86,7 +91,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                 const normalizedMoviesList = normalizeMovies(response.data.results, genresEntities);
                 const updatedMoviesList = nextPage ? getUpdatedWithNewItemsList(moviesList, normalizedMoviesList) : normalizedMoviesList;
 
-                this.setState(newState(this.state, response, updatedMoviesList));
+                this.setState(getUpdatedState(this.state, response, updatedMoviesList));
                 toast.dismiss();
             } else {
                 toast.error(response.errorMessage, {
@@ -103,7 +108,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
     fetchSearchedMovies = (query: string, isNewSearch?: boolean, nextPage?: number) => {
         const { genresEntities, moviesList } = this.state;
 
-        this.setState({ loading: isNewSearch ? "initial_load" : "load_more_items"});
+        this.setState({ loading: isNewSearch ? "initial_load" : "load_more_items" });
 
         const params = {
             query,
@@ -115,7 +120,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                 const normalizedMoviesList = normalizeMovies(response.data.results, genresEntities);
                 const updatedMoviesList = nextPage ? getUpdatedWithNewItemsList(moviesList, normalizedMoviesList) : normalizedMoviesList;
 
-                this.setState(newState(this.state, response, updatedMoviesList));
+                this.setState(getUpdatedState(this.state, response, updatedMoviesList));
                 toast.dismiss();
             } else {
                 toast.error(response.errorMessage, {
@@ -131,7 +136,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
 
     handleSearch = (event: any) => {
         const value = event.target.value;
-        if(value === "") {
+        if (value === "") {
             this.fetchNowPlaying();
             this.scrollToTopScrollbar();
             return;
@@ -143,20 +148,51 @@ class MoviesView extends Component<{}, MoviesManagementState> {
 
     handleScroll = (e: any) => {
         const { pagination, loading, searchTerm } = this.state;
-        const { page, hasNextPage} = pagination
+        const { page, hasNextPage } = pagination;
 
-        const bottom = e.target.scrollHeight - e.target.scrollTop - 1 <= e.target.clientHeight; // -1 is for edge cases with decimal numbers of scrollTop
+        const bottom = e.target.scrollHeight - e.target.scrollTop - 1 <= e.target.clientHeight; // -1 is for edge cases with decimal numbers of scrollTop 
+
         if (bottom && hasNextPage && loading === null) {
             toast.loading('Loading more items');
-            this.fetchMovies(page+1, searchTerm);
+            this.fetchMovies(page + 1, searchTerm);
+        }
+    }
+
+    scrollbarIsVisible = () => {
+        const { pagination, loading, searchTerm } = this.state;
+        const { page, hasNextPage } = pagination;
+
+        const moviesViewerComponent = document.getElementById("listScroll");
+
+        if (moviesViewerComponent) {
+            const elementOffset = moviesViewerComponent['offsetTop'];
+            const hasScrollBar = moviesViewerComponent['scrollHeight'] + elementOffset + 1 > window.innerHeight;
+            if (hasNextPage && loading === null && !hasScrollBar) {
+                this.fetchMovies(page + 1, searchTerm);
+            }
         }
     }
 
     scrollToTopScrollbar = () => {
         const moviesViewerComponent = document.getElementById("listScroll");
-        if(moviesViewerComponent) {
-            moviesViewerComponent['scrollTo']({ top: 0, behavior: 'smooth'});
+        if (moviesViewerComponent) {
+            moviesViewerComponent['scrollTo']({ top: 0, behavior: 'smooth' });
         }
+    }
+
+    handleSortChange = (event: any) => {
+        const { moviesList, defaultMoviesList } = this.state;
+        const { value } = event.target;
+        let sortedMoviesList = [] as MovieExtended[];
+        this.setState({ loading: "initial_load"})
+        sortedMoviesList = getSortedMoviesList(moviesList, defaultMoviesList, value);
+
+        this.setState({ 
+                loading: null,
+                defaultMoviesList: moviesList, 
+                moviesList: sortedMoviesList, 
+                sortMoviesBy: value 
+            }, () => this.scrollToTopScrollbar());
     }
 
     render() {
@@ -173,12 +209,11 @@ class MoviesView extends Component<{}, MoviesManagementState> {
             <Box>
                 <Header
                     sortMoviesBy={sortMoviesBy}
-                    // handleSortChange={this.handleSortChange}
+                    handleSortChange={this.handleSortChange}
                     handleSearch={this.handleSearch}
                     pagination={pagination}
                     isSearching={isSearching}
                     searchTerm={searchTerm}
-
                 />
                 <Box display="flex" justifyContent="center" flexDirection="row" className="MainContainer_Body">
                     <Box
@@ -188,7 +223,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
                         flexDirection="row"
                         flexWrap="wrap"
                         justifyContent="space-evenly"
-                        style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 310px)'}}
+                        style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 310px)' }}
                         id="listScroll"
                         onScroll={this.handleScroll}
                     >

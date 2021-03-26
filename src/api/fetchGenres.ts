@@ -17,7 +17,7 @@ export interface FetchGenresApiResponse {
  * Endpoints:
  * - GET /genre/movie/list
  *
- * @returns Promise<FetchMoviesApiResponse>
+ * @returns Promise<FetchGenresApiResponse>
  */
 
 export const fetchGenresList = (): Promise<FetchGenresApiResponse> => (
@@ -30,7 +30,6 @@ export const fetchGenresList = (): Promise<FetchGenresApiResponse> => (
                 ...response,
                 success: true
             }
-
         }).catch((error: any) => {
             return {
                 ...error,

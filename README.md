@@ -32,6 +32,7 @@ npm run start
 * Search field with on change search action (Debounce used here)
 * Show details of movie by click the specific button
 * Infinity scrolling for pagination
+* Movie trailer from embeded youtube video.
 * Sort by "Highest vote average" or "Lowest vote average"
 
 ### Testing build with
