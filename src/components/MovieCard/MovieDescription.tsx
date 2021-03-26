@@ -23,10 +23,10 @@ const MovieDescription: React.FC<MovieDescriptionProps> = memo(({ movie }: Movie
         <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
             <Box component={'span'} fontWeight="bold">Release date:</Box> {movie.release_date}
         </Box>
-        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary" style={{ wordBreak: "break-word" }}>
             <Box component={'span'} fontWeight="bold">Overview:</Box> {movie.overview}
         </Box>
-        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+        <Box component={'p'} textAlign="justify" p="5px" color="textSecondary" style={{ wordBreak: "break-word" }}>
             <Box component={'span'} fontWeight="bold">Genres:</Box> {movie.genres}
         </Box>
     </CardContent>

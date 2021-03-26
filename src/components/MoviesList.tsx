@@ -9,14 +9,13 @@ import MovieDescription from "./MovieCard/MovieDescription";
 
 interface MoviesListProps { 
     moviesList: MovieExtended[];  
-    loadingMoreItems: string | null;
 }
 
 interface MovieTrailerApiResponse { results: Trailer[]; }
 interface MovieReviewApiResponse { results: Review[]; }
 interface SimilarMoviesApiResponse { results: Movie[]; }
 
-const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList, loadingMoreItems }: MoviesListProps) => {
+const MoviesList: React.FC<MoviesListProps> = memo(({ moviesList }: MoviesListProps) => {
     const [showDetails, setShowDetails] = useState(false);
     const [selectedMovie, setSelectedMovie] = useState("");
     const [selectedMovieTrailer, setSelectedMovieTrailer] = useState("");

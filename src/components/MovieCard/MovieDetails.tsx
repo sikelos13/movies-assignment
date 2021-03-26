@@ -18,12 +18,12 @@ const MovieDetails: React.FC<MovieDetailsProps> = memo(({ selectedMovieTrailer, 
                 selectedMovieReviews.map((review: any) => {
                     return (
                         <Box component={'span'} key={review.id}>
-                            <Box component={'p'} textAlign="justify" p="5px" color="textSecondary"><Box component={'span'} fontWeight="bold">Author:</Box> {review.author}</Box>
-                            <Box component={'p'} textAlign="justify" p="5px" color="textSecondary"><Box component={'span'} fontWeight="bold">Review:</Box> {review.review}</Box>
+                            <Box component={'p'} textAlign="justify" p="5px" color="textSecondary" style={{ wordBreak: "break-word" }}><Box component={'span'} fontWeight="bold">Author:</Box> {review.author}</Box>
+                            <Box component={'p'} textAlign="justify" p="5px" color="textSecondary" style={{ wordBreak: "break-word" }}><Box component={'span'} fontWeight="bold">Review:</Box> {review.review}</Box>
                         </Box>
                     )
                 })}
-            <Box component={'p'} textAlign="justify" p="5px" color="textSecondary">
+            <Box component={'p'} textAlign="justify" p="5px" color="textSecondary" style={{ wordBreak: "break-word" }}>
                 <Box component={'span'} fontWeight="bold">Similar Movies: </Box>
                 {selectedMovieSimilar}
             </Box>

@@ -10,6 +10,8 @@ export const normalizeMovies = (moviesList: Movie[], genresEntities: Record<numb
     const updatedMoviesList = moviesList.map((movie: Movie) => {
         const item = {
             ...movie,
+            release_date: movie.release_date !== "" ? movie.release_date : 'Date not available',
+            overview: movie.overview !== "" ? movie.overview : 'Overview not available',
             genres: getGenresNames(genresEntities, movie.genre_ids)
         } as MovieExtended;
 
