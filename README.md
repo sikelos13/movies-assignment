@@ -30,10 +30,10 @@ npm run start
 
 ### Features implemented
 * Search field with on change search action (Debounce used here)
-* Show details of movie by click the specific button
+* Show details of movie by click the card
 * Infinity scrolling for pagination
 * Movie trailer from embeded youtube video.
-* Sort by "Highest vote average" or "Lowest vote average"
+* Sort by "Highest score average" or "Lowest score average"
 
 ### Testing build with
 
@@ -42,8 +42,6 @@ npm run start
 * [Axios mock adapter](https://github.com/ctimmerm/axios-mock-adapter#readme)
 
 ### Testing
-
-For testing i have used jest framework together with enzyme to render components.
 To run the test type:
 
 ```
