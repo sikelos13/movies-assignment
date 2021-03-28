@@ -137,6 +137,7 @@ class MoviesView extends Component<{}, MoviesManagementState> {
     handleSearch = (event: any) => {
         const value = event.target.value;
         if (value === "") {
+            this.setState({ searchTerm: value });
             this.fetchNowPlaying();
             this.scrollToTopScrollbar();
             return;

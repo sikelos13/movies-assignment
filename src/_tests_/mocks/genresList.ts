@@ -16,3 +16,10 @@ export const genresList = [
         name: 'Adventure'
     }
   ]
+
+  export const normalizedGenresList = {
+      1: {id: 1, name: 'Action'},
+      2: {id: 2, name: 'Drama'},
+      3: {id: 3, name: 'Comedy'},
+      4: {id: 4, name: 'Adventure'},
+  }

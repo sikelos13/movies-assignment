@@ -38,7 +38,7 @@ npm run start
 ### Testing build with
 
 * [Jest for React](https://jestjs.io/)
-* [Enzyme](https://enzymejs.github.io/enzyme/)
+* [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 * [Axios mock adapter](https://github.com/ctimmerm/axios-mock-adapter#readme)
 
 ### Testing

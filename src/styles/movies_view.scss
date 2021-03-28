@@ -13,7 +13,7 @@
 
 @media only screen and (max-width: 1040px) {
     .Header_Actions {
-        flex-direction: column !important;
+        flex-direction: column-reverse !important;
         align-items: center;
 
         .SortHeader_Action {

@@ -1,27 +1,31 @@
 import MoviesView from "../../containers/MoviesView";
-import * as React from 'react';
-import { shallow, mount } from 'enzyme';
+import { render, RenderResult } from '@testing-library/react'
 import MoviesList from "../../components/MoviesList";
-import { moviesList } from "../mocks/moviesList";
+import { moviesList } from '../mocks/moviesList';
 
-const MoviesListProps = {
-    moviesList: moviesList
-}
+let documentBody: RenderResult;
 
-describe("Application container renders", () => {
-  it('renders children when passed in', () => {
-    const result = shallow((
-      <MoviesView>
-        <div className="unique" />
-      </MoviesView>
-    ));
+describe("<MoviesView />", () => {
+    beforeEach(() => {
+        documentBody = render(<MoviesView />);
+    });
 
-    expect(result).toBeTruthy();
-  });
+    test("Renders <Header /> component correctly", () => {
+        expect(documentBody.getByText(/Welcome to MoviesRama/i)).toBeInTheDocument();
+    });
+});
 
-  it('should render list component', () => {
+describe("<MoviesList />", () => {
+    beforeEach(() => {
+        documentBody = render(<MoviesList moviesList={moviesList} />);
+    });
 
-    const wrapper = mount(<MoviesList {...MoviesListProps} />);
-    expect(wrapper.find(MoviesList).length).toEqual(1);
-  });
+    test("Renders playing now correctly", () => {
+        expect(documentBody.getByText(/Lord of War/i)).toBeInTheDocument();
+    });
+
+    test("User can see at least 3 movies", () => {
+        expect(moviesList).toHaveLength(3);
+    });
+
 });

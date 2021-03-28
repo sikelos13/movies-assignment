@@ -45,7 +45,6 @@ export const fetchMoviesApi = (params: FetchMoviesApiParams): Promise<FetchMovie
                 ...response,
                 success: true
             }
-
         }).catch((error: any) => {
             return {
                 ...error,
