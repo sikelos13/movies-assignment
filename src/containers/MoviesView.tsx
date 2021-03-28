@@ -4,7 +4,7 @@ import { fetchMoviesApi, FetchMoviesApiResponse } from "../api/fetchMovies";
 import MoviesList from "../components/MoviesList";
 import Box from "@material-ui/core/Box";
 import toast from "react-hot-toast";
-import SkeletonLoader from "../components/TableCellLoader";
+import SkeletonLoader from "../components/SkeletonLoader";
 import Header from "../components/Header";
 import { debounce } from "../utils/debounce";
 import { MovieExtended } from "../api/types/Movie";

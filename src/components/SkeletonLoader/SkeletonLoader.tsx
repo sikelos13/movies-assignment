@@ -1,10 +1,10 @@
-import { TableCell } from "./TableCell";
+import { SkeletonColumn } from "./SkeletonColumn";
 import Box from '@material-ui/core/Box';
 
 export const SkeletonLoader = () => (
     <Box display="flex" width="100%" justifyContent="space-between">
-        <TableCell />
-        <TableCell />
-        <TableCell />
+        <SkeletonColumn />
+        <SkeletonColumn />
+        <SkeletonColumn />
     </Box>
 )

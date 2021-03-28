@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box';
 import { SkeletonCard } from './components/SkeletonCard';
 
-export const TableCell = () => {
+export const SkeletonColumn = () => {
     return (
         <Box width="33%" mr={5} p={3}>
             <SkeletonCard />

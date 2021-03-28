@@ -13,7 +13,7 @@ export interface FetchNowPlayingApiResponse {
         total_pages: number;
     };
 }
-export interface FetchMoviesApiParams {
+export interface FetchNowPlayingApiParams {
     page: number;
 }
 
@@ -26,7 +26,7 @@ export interface FetchMoviesApiParams {
  * @returns Promise<FetchNowPlayingApiResponse>
  */
 
-export const fetchNowPlayingApi = (params: FetchMoviesApiParams): Promise<FetchNowPlayingApiResponse> => (
+export const fetchNowPlayingApi = (params: FetchNowPlayingApiParams): Promise<FetchNowPlayingApiResponse> => (
     axios.get([
         `${process.env.REACT_APP_API_ENDPOINT}/movie/now_playing`,
         `?api_key=${process.env.REACT_APP_API_KEY}&language=en-US`,
@@ -40,7 +40,6 @@ export const fetchNowPlayingApi = (params: FetchMoviesApiParams): Promise<FetchN
                 ...response,
                 success: true
             }
-
         }).catch((error: any) => {
             return {
                 ...error,
