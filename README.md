@@ -1,6 +1,6 @@
-## Workable-assignment
+## Movies-assignment
 
-Workable assignment using CRA and TheMoviesDB API.
+Movies assignment using CRA and TheMoviesDB API.
 ## Build With
 
 * [React](https://reactjs.org/)
@@ -13,8 +13,8 @@ Workable assignment using CRA and TheMoviesDB API.
 ### How to run 
 
 ```
-git clone workable-assignment
-cd workable-assignment
+git clone movies-assignment
+cd movies-assignment
 Create on the root folder a .env file and put inside our env var for API Endpoint and our API KEY 
 ```
 
